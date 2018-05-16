@@ -4,7 +4,7 @@
 
 ### Download a ZIP of this repo
 
-### Create a new firebase project on <a href="https://console.firebase.google.com">Firebase</a>
+### Create a new project on <a href="https://console.firebase.google.com">Firebase</a>
 
 ### Setup Realtime Database and set security rules to allow all reads and writes (for testing purposes only)
 
