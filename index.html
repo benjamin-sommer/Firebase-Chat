@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Chat App</title>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyAIGqv-aT2lPq2wlnjdQzrgaavV4hJu98M",
+      authDomain: "chat-11f62.firebaseapp.com",
+      databaseURL: "https://chat-11f62.firebaseio.com",
+      projectId: "chat-11f62",
+      storageBucket: "chat-11f62.appspot.com",
+      messagingSenderId: "744209468244"
+    };
+    
+    firebase.initializeApp(config);
+  </script>
+</head>
+<body>
+  <p id="namen" hidden></p>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    strong {
+      font-size: 30px;
+    }
+
+    p {
+      padding: 10px;
+      border-radius: 5px;
+      width: 300px;
+      float: left;
+      position: relative;
+    }
+
+    #me:before {
+      content: "";
+      width: 0px;
+      height: 0px;
+      position: absolute;
+      border-left: 15px solid #3167d8;
+      border-right: 15px solid transparent;
+      border-top: 15px solid #3167d8;
+      border-bottom: 15px solid transparent;
+      right: -20px;
+      top: 0px;
+    }
+
+    span {
+      float: right;
+    }
+
+    #me {
+      background-color: #3167d8;
+      float: right;
+    }
+
+    #other {
+      background-color: #eaeaea;
+    }
+
+    #other:before {
+      content: "";
+      width: 0px;
+      height: 0px;
+      position: absolute;
+      border-left: 15px solid transparent;
+      border-right: 15px solid #eaeaea;
+      border-top: 15px solid #eaeaea;
+      border-bottom: 15px solid transparent;
+      left: -20px;
+      top: 0px;
+    }
+  </style>
+  <div id="main" style="margin: 10px 300px;background-color: #d8d8d8;padding: 10px 50px;border-radius: 5px;">
+    <div id="show" style="text-align: center;margin-top: 100px;margin-bottom: 100px;">
+      <input style="width: 200px;height: 25px;font-size: 20px;" type="text" placeholder="Your Name" id="uName" required>
+      <button id="OK" style="width: 40px;" type="submit">OK</button>
+    </div>
+    <div id="hide">
+      <div id="messages">
+      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+      <div style="position: fixed;margin-bottom: 30px; padding: 15px 45px;bottom: 0; left: 0; right: 0;text-align: center;background: rgba(255, 255, 255, 0.9); ">
+        <strong>Chat: </strong><input id="msg" type="text" style="width: 20%;height: 30px;">&nbsp;&nbsp;&nbsp;<button id="go">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $("#hide").hide();
+    $("#show").show();
+    var database = firebase.database();
+    $("#OK").click(function() {
+      if ($("#uName").val() != "") {
+        $("#hide").show();
+        urName = $("#uName").val();
+        $('#namen').html(urName);
+        $("#show").hide();
+        loadMessages();
+      }
+    });
+
+    function sendMessage(message, from) {
+      var currentDate = new Date();
+      var now = currentDate.getTime();
+      firebase.database().ref('messages/' + now).set({
+        message: message,
+        from: from
+      });
+      $("#msg").val("");
+    }
+
+    $("#go").click(function() {
+      sendMessage($("#msg").val(), urName)
+    });
+
+    function loadMessages() {
+      firebase.database().ref("messages").on("value", function(snapshot) {
+        $("#messages").html("");
+          snapshot.forEach(function(childSnapshot) {
+            console.log(childSnapshot.val().from == $("#namen").html());
+            if (childSnapshot.val().from == $("#namen").html()) {
+              $("#messages").append("<p id='me'><strong>" + childSnapshot.val().message + "</strong><span>Me</span></p><br style='clear:both;'>");
+            } else {
+              $("#messages").append("<p id='other'><strong>" + childSnapshot.val().message + "</strong><span>" + childSnapshot.val().from + "</span></p><br style='clear:both;'>");
+            }
+          });
+        }, function(error) {
+          console.error(error);
+        });
+
+    }
+  </script>
+</body>
+</html>
