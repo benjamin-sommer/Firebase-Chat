@@ -1,1 +1,3 @@
 # Firebase-Chat
+
+## Setup
